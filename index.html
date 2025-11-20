@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HMB GROUP | Family Office</title>
+    
+    <!-- Fonts: Inter (UI) and Playfair Display (Headings) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Config for Apple/Luxury Colors -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        luxury: {
+                            bg: "#f5f5f7",     // Apple off-white
+                            text: "#1d1d1f",   // Deep charcoal text
+                            gray: "#86868b",   // Muted secondary text
+                            gold: "#d4af37",   // Subtle gold accent
+                            dark: "#0a0a0a"    // Almost black
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom CSS for Physics & Smoothness -->
+    <style>
+        /* Hide Scrollbar but keep functionality */
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        html { scrollbar-width: none; }
+
+        body {
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+            overflow-x: hidden;
+        }
+
+        /* Soft ambient glow background */
+        .ambient-glow {
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8) 0%, rgba(245, 245, 247, 0) 70%);
+        }
+
+        /* Card Hover Effect mimicking Apple's physics */
+        .bento-card {
+            transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        .bento-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        }
+
+        /* Portfolio Badge */
+        .portfolio-tag {
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 px-6 py-4 transition-all duration-300 backdrop-blur-xl bg-[#f5f5f7]/70 border-b border-gray-200/50" id="navbar">
+        <div class="max-w-[1400px] mx-auto flex justify-between items-center">
+            <a href="#" class="text-2xl font-serif font-bold tracking-tight text-luxury-text">HMB GROUP.</a>
+            
+            <div class="hidden md:flex gap-8 text-sm font-medium text-luxury-gray">
+                <a href="#about" class="hover:text-luxury-text transition-colors">About</a>
+                <a href="#ventures" class="hover:text-luxury-text transition-colors">Venture Capital</a>
+                <a href="#strategy" class="hover:text-luxury-text transition-colors">Strategy</a>
+                <a href="#contact" class="hover:text-luxury-text transition-colors">Contact</a>
+            </div>
+
+            <button onclick="window.location.href='mailto:pitch@hmbgroup.com'" class="flex items-center gap-2 px-5 py-2 rounded-full border border-gray-300 text-xs font-semibold uppercase tracking-widest hover:bg-luxury-text hover:text-white hover:border-luxury-text transition-all duration-300">
+                <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                Pitch Us
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative h-screen flex items-center justify-center overflow-hidden">
+        <!-- Background Glow -->
+        <div class="absolute inset-0 ambient-glow z-0 opacity-60"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white rounded-full blur-[100px] z-0"></div>
+
+        <div class="relative z-10 text-center px-6 max-w-5xl">
+            <h1 class="hero-title font-serif text-6xl md:text-8xl text-luxury-text leading-[1.1] tracking-tight mb-6 opacity-0 translate-y-10">
+                Visionary Capital.<br>
+                <span class="text-gray-400">Enduring Legacy.</span>
+            </h1>
+            <p class="hero-sub text-lg md:text-xl text-luxury-gray font-light max-w-2xl mx-auto opacity-0 translate-y-10">
+                The private family office of <strong>Vikramji Hirachandji Bafna</strong>.
+                <br>Stewarding wealth through strategic innovation and venture investments.
+            </p>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-0 hero-scroll">
+            <span class="text-[10px] uppercase tracking-widest text-gray-400">Scroll</span>
+            <div class="w-[1px] h-12 bg-gradient-to-b from-gray-300 to-transparent"></div>
+        </div>
+    </section>
+
+    <!-- About / What We Do -->
+    <section id="about" class="py-32 px-6 md:px-12 bg-luxury-bg relative z-10">
+        <div class="max-w-[1200px] mx-auto">
+            <div class="mb-20 fade-in-up">
+                <h2 class="text-4xl md:text-5xl font-serif text-luxury-text mb-4">Our Mandate</h2>
+                <div class="h-[1px] w-24 bg-luxury-gold"></div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Venture Capital Card (Highlighted) -->
+                <div class="md:col-span-2 bento-card bg-white p-10 rounded-[32px] border border-gray-100 relative overflow-hidden min-h-[320px] flex flex-col justify-between cursor-pointer group">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-blue-50 to-transparent rounded-full -mr-10 -mt-10 z-0 transition-transform duration-700 group-hover:scale-125"></div>
+                    <div class="relative z-10">
+                        <div class="w-12 h-12 rounded-full bg-luxury-bg flex items-center justify-center mb-6 group-hover:bg-luxury-text group-hover:text-white transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                        <h3 class="text-2xl font-medium mb-2">Venture Capital</h3>
+                        <p class="text-luxury-gray max-w-md">Backing high-conviction founders building the future. We invest in early-stage startups with scalable technological advantages.</p>
+                    </div>
+                    <div #class="mt-8 flex items-center gap-2 text-sm font-medium text-luxury-text">
+                        View Portfolio <span class="text-luxury-gold">&rarr;</span>
+                    </div>
+                </div>
+
+                <!-- Strategic Asset Management -->
+                <div class="md:col-span-1 bento-card bg-white p-10 rounded-[32px] border border-gray-100 flex flex-col justify-between">
+                    <div class="w-12 h-12 rounded-full bg-luxury-bg flex items-center justify-center mb-6">
+                        <svg class="w-6 h-6 text-luxury-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-medium mb-2">Asset Allocation</h3>
+                        <p class="text-luxury-gray">Diversified growth across equities, real estate, and private markets.</p>
+                    </div>
+                </div>
+
+                <!-- Legacy -->
+                <div class="md:col-span-3 bento-card bg-luxury-dark text-white p-10 rounded-[32px] border border-gray-800 relative overflow-hidden flex flex-col md:flex-row items-center justify-between">
+                    <div class="max-w-2xl relative z-10">
+                        <h3 class="text-2xl font-medium mb-4">The Family Legacy</h3>
+                        <p class="text-gray-400 leading-relaxed">
+                            Under the leadership of <strong>Vikramji Hirachandji Bafna</strong>, HMB Group combines traditional values of integrity and prudence with a modern investment outlook.
+                        </p>
+                    </div>
+                    <div class="mt-8 md:mt-0 relative z-10">
+                        <div class="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center text-luxury-gold">
+                            <span class="font-serif text-2xl italic">VB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!--  Strategy Section -->
+    <section id="strategy" class="py-32 px-6 md:px-12 bg-white relative z-10">
+    <div class="max-w-[1200px] mx-auto">
+    <div class="mb-20 fade-in-up text-center">
+    <span class="text-luxury-gold uppercase tracking-widest text-xs font-bold mb-4 block">Our Strategy</span>
+    <h2 class="text-4xl md:text-5xl font-serif text-luxury-text mb-4">A Blueprint for Enduring Growth</h2>
+    <p class="text-luxury-gray max-w-2xl mx-auto text-lg font-light">We combine disciplined capital allocation with opportunity-driven venture investments, ensuring wealth preservation and forward momentum.</p>
+    </div>
+
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <!-- Pillar 1 -->
+    <div class="bento-card p-10 bg-[#f5f5f7] border border-gray-200 rounded-[28px]">
+    <h3 class="text-2xl font-serif mb-3">Capital Preservation</h3>
+    <p class="text-luxury-gray">Risk-managed allocation across multi-asset classes designed to safeguard family wealth while compounding steadily.</p>
+    </div>
+
+
+    <!-- Pillar 2 -->
+    <div class="bento-card p-10 bg-[#f5f5f7] border border-gray-200 rounded-[28px]">
+    <h3 class="text-2xl font-serif mb-3">Founder-First Venture Investing</h3>
+    <p class="text-luxury-gray">Backing resilient founders solving fundamental problems with defensible moats and scalable technology.</p>
+    </div>
+
+
+    <!-- Pillar 3 -->
+    <div class="bento-card p-10 bg-[#f5f5f7] border border-gray-200 rounded-[28px]">
+    <h3 class="text-2xl font-serif mb-3">Legacy & Continuity</h3>
+    <p class="text-luxury-gray">A long-term stewardship approach grounded in family values, sustainability, and intergenerational planning.</p>
+    </div>
+    </div>
+    </div>
+    </section>
+
+    <!-- Horizontal Scroll / Venture Section -->
+    <section id="ventures" class="bg-luxury-dark text-white overflow-hidden relative">
+        <div class="horizontal-container h-screen flex items-center">
+            <div class="horizontal-wrapper flex gap-20 px-12 md:px-32 items-center w-[300vw]">
+                
+                <!-- Intro Panel -->
+                <div class="w-[80vw] md:w-[40vw] shrink-0">
+                    <span class="text-luxury-gold uppercase tracking-widest text-xs font-bold mb-4 block">Current Portfolio</span>
+                    <h2 class="text-5xl md:text-7xl font-serif mb-8">Fueling Innovation.</h2>
+                    <p class="text-xl text-gray-400 font-light max-w-xl leading-relaxed">
+                        We identify and partner with disruptors. Our venture arm focuses on technology-driven startups solving fundamental problems.
+                    </p>
+                </div>
+
+                <!-- Featured Portfolio: Terapush -->
+                <div class="w-[80vw] md:w-[50vw] shrink-0 h-[60vh] bg-[#1c1c1e] rounded-[32px] border border-white/10 flex flex-col md:flex-row overflow-hidden group relative">
+                    <!-- Visual Side -->
+                    <div class="w-full md:w-1/2 bg-gradient-to-br from-indigo-900 to-black relative overflow-hidden flex items-center justify-center">
+                        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
+                        <!-- Abstract Representation of Terapush -->
+                        <div class="text-4xl md:text-5xl font-bold tracking-tight text-white z-10">
+                            Terapush.
+                        </div>
+                    </div>
+                    
+                    <!-- Content Side -->
+                    <div class="w-full md:w-1/2 p-10 flex flex-col justify-center relative">
+                        <div class="absolute top-8 right-8 portfolio-tag px-3 py-1 rounded-full text-xs uppercase tracking-widest text-white bg-green-500">
+                            Early
+                        </div>
+                        <h3 class="text-3xl font-serif mb-4">Terapush India Private Limited</h3>
+                        <p class="text-gray-400 mb-8">
+                            A unified platform bridging the gap between startups, investors, and talent. Terapush accelerates innovation by streamlining deal flow and resource access.
+                        </p>
+                        <div class="grid grid-cols-2 gap-4 mb-8">
+                            <div>
+                                <div class="text-2xl font-light text-white">Pre-Seed</div>
+                                <div class="text-xs text-gray-500 uppercase">Stage</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-light text-white">Bengaluru</div>
+                                <div class="text-xs text-gray-500 uppercase">HQ</div>
+                            </div>
+                        </div>
+                        <a href="https://terapush.in" class="text-luxury-gold text-sm hover:underline underline-offset-4 flex items-center gap-2">
+                            Visit Website <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Investment Philosophy Panel -->
+                <div class="w-[80vw] md:w-[40vw] shrink-0 h-[60vh] bg-[#1c1c1e] rounded-[32px] border border-white/10 p-12 flex flex flex-col items-center justify-center text-center relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-luxury-gold to-transparent opacity-50"></div>
+                    <h3 class="text-3xl font-serif mb-4">The HMB Thesis</h3>
+                    <p class="text-gray-400 text-lg">We are sector-agnostic but founder-obsessed. We look for resilience, clarity of vision, and market-defining potential.</p>
+                </div>
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <footer id="contact" class="bg-white text-luxury-text pt-32 pb-12 rounded-t-[40px] relative z-20 -mt-10 shadow-[0_-20px_40px_rgba(0,0,0,0.05)]">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="text-4xl md:text-5xl font-serif mb-8 text-luxury-text">Have an idea?.</h2>
+            <p class="text-luxury-gray mb-12 text-lg font-light max-w-xl mx-auto">
+                HMB Group operates with discretion. For investment proposals or partnership inquiries, please contact our office directly.
+            </p>
+            
+            <!-- Direct Contact Card -->
+            <div class="bg-[#f5f5f7] p-8 md:p-12 rounded-[32px] max-w-2xl mx-auto mb-16 border border-gray-100">
+                <div class="grid md:grid-cols-2 gap-8 text-left">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-widest text-luxury-gold mb-2 block">Email</span>
+                        <a href="mailto:harsh@grouphmb.in" class="text-xl font-medium hover:text-luxury-gold transition-colors">
+                            harsh@grouphmb.in
+                        </a>
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-widest text-luxury-gold mb-2 block">Phone</span>
+                        <a href="tel:+918296733414" class="text-xl font-medium hover:text-luxury-gold transition-colors">
+                            +91 82967 33414
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <a href="mailto:harsh@grouphmb.in" class="btn-primary bg-luxury-dark text-white px-10 py-4 rounded-full font-medium text-lg flex items-center mx-auto gap-3 inline-flex hover:bg-black transition-colors">
+                Send Investment Deck
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+        </div>
+
+        <div class="mt-32 border-t border-gray-100 max-w-6xl mx-auto px-6 pt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm text-gray-400">
+            <div>
+                <h4 class="text-luxury-text mb-2 font-serif text-lg font-bold">HMB GROUP.</h4>
+                <p>Office of Vikramji Hirachandji Bafna</p>
+                <p>India</p>
+            </div>
+            <div class="md:text-right">
+                &copy; 2025 HMB Group. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts: GSAP & Lenis Smooth Scroll -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
+
+    <script>
+        // 1. Initialize Lenis (Apple-like Inertia Scroll)
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            smooth: true,
+        });
+        function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+
+        // Connect GSAP
+        gsap.registerPlugin(ScrollTrigger);
+
+        // 2. Hero Animations
+        const tl = gsap.timeline();
+        tl.to(".hero-title", { opacity: 1, y: 0, duration: 1.5, ease: "power3.out", delay: 0.2 })
+          .to(".hero-sub", { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" }, "-=1")
+          .to(".hero-scroll", { opacity: 1, duration: 1 }, "-=0.5");
+
+        // 3. Fade Up Elements
+        gsap.utils.toArray('.fade-in-up').forEach(element => {
+            gsap.from(element, {
+                scrollTrigger: { trigger: element, start: "top 85%" },
+                opacity: 0, y: 40, duration: 1, ease: "power3.out"
+            });
+        });
+
+        // 4. Bento Cards Stagger
+        gsap.from(".bento-card", {
+            scrollTrigger: { trigger: "#about", start: "top 75%" },
+            y: 50, opacity: 0, duration: 1, stagger: 0.15, ease: "power3.out"
+        });
+
+        // 5. Horizontal Scroll for Venture Section (Desktop Only)
+        if (window.innerWidth > 768) {
+            let sections = gsap.utils.toArray(".horizontal-wrapper");
+            gsap.to(sections, {
+                xPercent: -66, // 3 panels = move 2/3rds
+                ease: "none",
+                scrollTrigger: {
+                    trigger: "#ventures",
+                    pin: true,
+                    scrub: 1,
+                    end: "+=2500",
+                }
+            });
+        }
+
+        // 6. Navbar Glass Effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('shadow-sm');
+            } else {
+                navbar.classList.remove('shadow-sm');
+            }
+        });
+    </script>
+</body>
+</html>
