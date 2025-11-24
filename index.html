@@ -67,11 +67,8 @@
             background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8) 0%, rgba(245, 245, 247, 0) 70%);
         }
 
-        /* Bento Card Base Styles (Hover handled by JS Tilt now for smoother physics) */
-        .bento-card {
-            /* transition is handled by GSAP */
-            transform-style: preserve-3d;
-        }
+        /* 3D Transform Setup */
+        .bento-card { transform-style: preserve-3d; will-change: transform; }
 
         .portfolio-tag {
             backdrop-filter: blur(10px);
@@ -79,105 +76,89 @@
             border: 1px solid rgba(0, 0, 0, 0.1);
         }
 
-        /* Mobile Menu */
-        #mobile-menu { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease; }
-        .menu-open { transform: translateY(0%); opacity: 1; pointer-events: auto; }
-        .menu-closed { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+        /* MOBILE MENU: Glassmorphism */
+        #mobile-menu { 
+            transition: opacity 0.4s ease, visibility 0.4s;
+            background: rgba(245, 245, 247, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .menu-open { opacity: 1; visibility: visible; pointer-events: auto; }
+        .menu-closed { opacity: 0; visibility: hidden; pointer-events: none; }
+
+        /* TEXT REVEAL MASK */
+        .reveal-text { overflow: hidden; display: block; }
+        .reveal-inner { display: block; transform: translateY(100%); }
 
         /* PRELOADER */
         .preloader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #0a0a0a;
-            z-index: 10000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #d4af37;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #0a0a0a; z-index: 10000;
+            display: flex; justify-content: center; align-items: center; color: #d4af37;
         }
-        .counter-container {
-            position: relative;
-            overflow: hidden;
-        }
-        .counter {
-            font-family: 'Playfair Display', serif;
-            font-size: 4rem;
-            font-weight: 400;
-            line-height: 1;
-        }
+        .counter-container { position: relative; overflow: hidden; }
+        .counter { font-family: 'Playfair Display', serif; font-size: 4rem; font-weight: 400; line-height: 1; }
 
         /* CUSTOM CURSOR UI */
-        .cursor-dot,
-        .cursor-outline {
-            position: fixed;
-            top: 0;
-            left: 0;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
+        .cursor-dot, .cursor-outline {
+            position: fixed; top: 0; left: 0; transform: translate(-50%, -50%);
+            border-radius: 50%; pointer-events: none; z-index: 9999;
         }
-        
-        .cursor-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #1d1d1f;
-        }
-
+        .cursor-dot { width: 8px; height: 8px; background-color: #1d1d1f; }
         .cursor-outline {
-            width: 40px;
-            height: 40px;
-            border: 1px solid rgba(29, 29, 31, 0.5);
+            width: 40px; height: 40px; border: 1px solid rgba(29, 29, 31, 0.5);
             transition: width 0.2s, height 0.2s, background-color 0.2s;
         }
-
         body.dark-cursor .cursor-dot { background-color: #fff; }
         body.dark-cursor .cursor-outline { border-color: rgba(255,255,255, 0.5); }
-
         body.hovering .cursor-outline {
-            width: 60px;
-            height: 60px;
-            background-color: rgba(212, 175, 55, 0.1);
-            border-color: #d4af37;
+            width: 60px; height: 60px; background-color: rgba(212, 175, 55, 0.1); border-color: #d4af37;
         }
         
         @media (max-width: 768px) {
             .cursor-dot, .cursor-outline, .noise-overlay { display: none; }
         }
+
+        /* STICKY FOOTER SETUP */
+        .main-content {
+            position: relative;
+            z-index: 10;
+            background-color: #f5f5f7; /* Must match body bg */
+            margin-bottom: 100vh; /* Placeholder for footer height */
+            box-shadow: 0 50px 50px rgba(0,0,0,0.5); /* Shadow for depth */
+        }
+        .sticky-footer-wrapper {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            z-index: 0;
+            height: auto;
+            min-height: 50vh;
+        }
     </style>
 </head>
 <body class="bg-luxury-bg">
 
-    <!-- 1. PRELOADER -->
+    <!-- PRELOADER -->
     <div class="preloader">
         <div class="counter-container">
             <span class="counter">0</span><span class="text-2xl align-top">%</span>
         </div>
     </div>
 
-    <!-- 2. FILM GRAIN OVERLAY -->
+    <!-- FILM GRAIN -->
     <div class="noise-overlay"></div>
 
-    <!-- 3. CUSTOM CURSOR -->
+    <!-- CURSOR -->
     <div class="cursor-dot"></div>
     <div class="cursor-outline"></div>
 
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 px-6 py-4 transition-all duration-300 backdrop-blur-xl bg-[#f5f5f7]/95 md:bg-[#f5f5f7]/80 border-b border-gray-200/50" id="navbar">
+    <nav class="fixed top-0 w-full z-50 px-6 py-4 transition-all duration-300 backdrop-blur-xl bg-[#f5f5f7]/80 border-b border-gray-200/50" id="navbar">
         <div class="max-w-[1400px] mx-auto flex justify-between items-center relative z-50">
+            <a href="#" class="hover-trigger text-xl md:text-2xl font-serif font-bold tracking-tight text-luxury-text" data-value="HMB GROUP." onmouseover="scrambleText(event)">HMB GROUP.</a>
             
-            <!-- DECODE EFFECT ON LOGO -->
-            <a href="#" 
-               class="hover-trigger text-xl md:text-2xl font-serif font-bold tracking-tight text-luxury-text"
-               data-value="HMB GROUP."
-               onmouseover="scrambleText(event)">
-               HMB GROUP.
-            </a>
-            
-            <!-- Desktop Menu -->
             <div class="hidden md:flex gap-8 text-sm font-medium text-luxury-gray">
                 <a href="#about" class="hover-trigger hover:text-luxury-text transition-colors">About</a>
                 <a href="#ventures" class="hover-trigger hover:text-luxury-text transition-colors">Venture Capital</a>
@@ -186,13 +167,11 @@
             </div>
 
             <div class="flex items-center gap-4">
-                <!-- MAGNETIC BUTTON -->
                 <button onclick="window.location.href='mailto:pitch@hmbgroup.com'" class="magnetic-btn hover-trigger hidden md:flex items-center gap-2 px-5 py-2 rounded-full border border-gray-300 text-xs font-semibold uppercase tracking-widest hover:bg-luxury-text hover:text-white hover:border-luxury-text transition-colors duration-300">
                     <span class="w-2 h-2 rounded-full bg-green-500"></span>
                     <span>Pitch Us</span>
                 </button>
 
-                <!-- Mobile Menu Button -->
                 <button id="mobile-menu-btn" class="md:hidden p-2 text-luxury-text focus:outline-none">
                     <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                 </button>
@@ -201,255 +180,242 @@
     </nav>
 
     <!-- Mobile Menu Overlay -->
-    <div id="mobile-menu" class="fixed inset-0 bg-[#f5f5f7] z-40 flex flex-col items-center justify-center menu-closed md:hidden pt-20">
-        <div class="flex flex-col gap-8 text-center text-2xl font-serif text-luxury-text">
-            <a href="#about" class="mobile-link" onclick="toggleMenu()">About</a>
-            <a href="#ventures" class="mobile-link" onclick="toggleMenu()">Venture Capital</a>
-            <a href="#strategy" class="mobile-link" onclick="toggleMenu()">Strategy</a>
-            <a href="#contact" class="mobile-link" onclick="toggleMenu()">Contact</a>
-            <a href="mailto:pitch@hmbgroup.com" class="text-lg font-sans text-luxury-gold mt-4 font-medium">Pitch Us &rarr;</a>
+    <div id="mobile-menu" class="fixed inset-0 z-40 flex flex-col items-center justify-center menu-closed md:hidden pt-20">
+        <div class="flex flex-col gap-8 text-center text-3xl font-serif text-luxury-text">
+            <a href="#about" class="mobile-link overflow-hidden"><span class="inline-block translate-y-10 transition-transform duration-500">About</span></a>
+            <a href="#ventures" class="mobile-link overflow-hidden"><span class="inline-block translate-y-10 transition-transform duration-500 delay-75">Venture Capital</span></a>
+            <a href="#strategy" class="mobile-link overflow-hidden"><span class="inline-block translate-y-10 transition-transform duration-500 delay-100">Strategy</span></a>
+            <a href="#contact" class="mobile-link overflow-hidden"><span class="inline-block translate-y-10 transition-transform duration-500 delay-150">Contact</span></a>
+            <a href="mailto:pitch@hmbgroup.com" class="text-lg font-sans text-luxury-gold mt-4 font-medium mobile-link overflow-hidden"><span class="inline-block translate-y-10 transition-transform duration-500 delay-200">Pitch Us &rarr;</span></a>
         </div>
     </div>
 
-    <!-- Hero Section -->
-    <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-        <div class="absolute inset-0 ambient-glow z-0 opacity-60"></div>
-        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[800px] h-[300px] md:h-[800px] bg-white rounded-full blur-[60px] md:blur-[100px] z-0"></div>
-
-        <div class="relative z-10 text-center px-6 max-w-5xl">
-            <h1 class="hero-title font-serif text-5xl md:text-8xl text-luxury-text leading-[1.1] tracking-tight mb-6 opacity-0 translate-y-10">
-                Visionary Capital.<br>
-                <span class="text-gray-400">Enduring Legacy.</span>
-            </h1>
-            <p class="hero-sub text-base md:text-xl text-luxury-gray font-light max-w-2xl mx-auto opacity-0 translate-y-10">
-                The private family office of <strong>Vikramji Hirachandji Bafna</strong>.
-                <br>Stewarding wealth through strategic innovation.
-            </p>
-        </div>
-
-        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-0 hero-scroll">
-            <span class="text-[10px] uppercase tracking-widest text-gray-400">Scroll</span>
-            <div class="w-[1px] h-12 bg-gradient-to-b from-gray-300 to-transparent"></div>
-        </div>
-    </section>
-
-    <!-- About Section (3D Tilt Enabled) -->
-    <section id="about" class="py-20 md:py-32 px-6 md:px-12 bg-luxury-bg relative z-10">
-        <div class="max-w-[1200px] mx-auto">
-            <div class="mb-12 md:mb-20 fade-in-up">
-                <h2 class="text-4xl md:text-5xl font-serif text-luxury-text mb-4">Our Mandate</h2>
-                <div class="h-[1px] w-24 bg-luxury-gold"></div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Venture Capital Card -->
-                <div class="hover-trigger md:col-span-2 bento-card bg-white p-8 md:p-10 rounded-[32px] border border-gray-100 relative overflow-hidden min-h-[320px] flex flex-col justify-between cursor-pointer group">
-                    <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-blue-50 to-transparent rounded-full -mr-10 -mt-10 z-0 transition-transform duration-700 group-hover:scale-125"></div>
-                    <div class="relative z-10 pointer-events-none"> <!-- pointer-events-none ensures magnet doesn't jitter on text -->
-                        <div class="w-12 h-12 rounded-full bg-luxury-bg flex items-center justify-center mb-6 group-hover:bg-luxury-text group-hover:text-white transition-colors">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-                        </div>
-                        <h3 class="text-2xl font-medium mb-2">Venture Capital</h3>
-                        <p class="text-luxury-gray max-w-md text-sm md:text-base">Backing high-conviction founders building the future. We invest in early-stage startups with scalable technological advantages.</p>
-                    </div>
-                    <div class="mt-8 flex items-center gap-2 text-sm font-medium text-luxury-text relative z-10 pointer-events-none">
-                        View Portfolio <span class="text-luxury-gold">&rarr;</span>
-                    </div>
-                </div>
-
-                <!-- Asset Allocation -->
-                <div class="hover-trigger md:col-span-1 bento-card bg-white p-8 md:p-10 rounded-[32px] border border-gray-100 flex flex-col justify-between">
-                    <div class="w-12 h-12 rounded-full bg-luxury-bg flex items-center justify-center mb-6">
-                        <svg class="w-6 h-6 text-luxury-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
-                    </div>
-                    <div>
-                        <h3 class="text-2xl font-medium mb-2">Asset Allocation</h3>
-                        <p class="text-luxury-gray text-sm md:text-base">Diversified growth across equities, real estate, and private markets.</p>
-                    </div>
-                </div>
-
-                <!-- Legacy -->
-                <div class="hover-trigger md:col-span-3 bento-card bg-luxury-dark text-white p-8 md:p-10 rounded-[32px] border border-gray-800 relative overflow-hidden flex flex-col md:flex-row items-center justify-between">
-                    <div class="max-w-2xl relative z-10 mb-6 md:mb-0 pointer-events-none">
-                        <h3 class="text-2xl font-medium mb-4">The Family Legacy</h3>
-                        <p class="text-gray-400 leading-relaxed text-sm md:text-base">
-                            Under the leadership of <strong>Vikramji Hirachandji Bafna</strong>, HMB Group combines traditional values of integrity and prudence with a modern investment outlook.
-                        </p>
-                    </div>
-                    <div class="relative z-10 pointer-events-none">
-                        <div class="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center text-luxury-gold">
-                            <span class="font-serif text-2xl italic">VB</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Strategy Section -->
-    <section id="strategy" class="py-20 md:py-32 px-6 md:px-12 bg-white relative z-10">
-        <div class="max-w-[1200px] mx-auto">
-            <div class="mb-16 md:mb-20 fade-in-up text-center">
-                <span class="text-luxury-gold uppercase tracking-widest text-xs font-bold mb-4 block">Our Strategy</span>
-                <h2 class="text-3xl md:text-5xl font-serif text-luxury-text mb-4">A Blueprint for Enduring Growth</h2>
-                <p class="text-luxury-gray max-w-2xl mx-auto text-base md:text-lg font-light">We combine disciplined capital allocation with opportunity-driven venture investments.</p>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-                <div class="hover-trigger bento-card p-8 md:p-10 bg-[#f5f5f7] border border-gray-200 rounded-[28px]">
-                    <h3 class="text-xl md:text-2xl font-serif mb-3">Capital Preservation</h3>
-                    <p class="text-luxury-gray text-sm">Risk-managed allocation across multi-asset classes designed to safeguard family wealth.</p>
-                </div>
-                <div class="hover-trigger bento-card p-8 md:p-10 bg-[#f5f5f7] border border-gray-200 rounded-[28px]">
-                    <h3 class="text-xl md:text-2xl font-serif mb-3">Founder-First</h3>
-                    <p class="text-luxury-gray text-sm">Backing resilient founders solving fundamental problems with defensible moats.</p>
-                </div>
-                <div class="hover-trigger bento-card p-8 md:p-10 bg-[#f5f5f7] border border-gray-200 rounded-[28px]">
-                    <h3 class="text-xl md:text-2xl font-serif mb-3">Legacy & Continuity</h3>
-                    <p class="text-luxury-gray text-sm">A long-term stewardship approach grounded in family values and sustainability.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Venture Section (Dark Background - Cursor will invert here) -->
-    <section id="ventures" class="dark-section bg-luxury-dark text-white overflow-hidden relative py-20 md:py-0">
+    <!-- MAIN CONTENT WRAPPER FOR STICKY FOOTER -->
+    <main class="main-content shadow-2xl rounded-b-[40px] overflow-hidden">
         
-        <div class="horizontal-container block md:h-screen md:flex md:items-center">
-            
-            <div class="horizontal-wrapper flex flex-col md:flex-row gap-16 md:gap-20 px-6 md:px-32 items-center w-full md:w-max">
-                
-                <!-- Intro Panel -->
-                <div class="w-full md:w-[40vw] shrink-0 text-center md:text-left">
-                    <span class="text-luxury-gold uppercase tracking-widest text-xs font-bold mb-4 block">Current Portfolio</span>
-                    <h2 class="text-4xl md:text-7xl font-serif mb-6 md:mb-8 text-white">Fueling Innovation.</h2>
-                    <p class="text-lg md:text-xl text-gray-400 font-light max-w-xl mx-auto md:mx-0 leading-relaxed">
-                        We identify and partner with disruptors. Our venture arm focuses on technology-driven startups.
+        <!-- Hero Section -->
+        <section class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+            <div class="absolute inset-0 ambient-glow z-0 opacity-60"></div>
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] md:w-[800px] h-[300px] md:h-[800px] bg-white rounded-full blur-[60px] md:blur-[100px] z-0"></div>
+
+            <div class="relative z-10 text-center px-6 max-w-5xl">
+                <h1 class="font-serif text-5xl md:text-8xl text-luxury-text leading-[1.1] tracking-tight mb-6">
+                    <span class="reveal-text"><span class="reveal-inner">Visionary Capital.</span></span>
+                    <span class="text-gray-400 reveal-text"><span class="reveal-inner">Enduring Legacy.</span></span>
+                </h1>
+                <div class="reveal-text">
+                    <p class="hero-sub text-base md:text-xl text-luxury-gray font-light max-w-2xl mx-auto reveal-inner">
+                        The private family office of <strong>Vikramji Hirachandji Bafna</strong>.
+                        <br>Stewarding wealth through strategic innovation.
                     </p>
                 </div>
+            </div>
 
-                <!-- Card 1: Terapush -->
-                <div class="hover-trigger w-full md:w-[50vw] shrink-0 h-[550px] md:h-[60vh] bg-[#1c1c1e] rounded-[32px] border border-white/10 flex flex-col md:flex-row overflow-hidden group relative">
-                    <div class="w-full md:w-1/2 bg-gradient-to-br from-indigo-900 to-black relative overflow-hidden flex items-center justify-center h-1/2 md:h-full">
-                        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
-                        <div class="text-4xl md:text-5xl font-bold tracking-tight text-white z-10">Terapush.</div>
+            <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-0 hero-scroll">
+                <span class="text-[10px] uppercase tracking-widest text-gray-400">Scroll</span>
+                <div class="w-[1px] h-12 bg-gradient-to-b from-gray-300 to-transparent"></div>
+            </div>
+        </section>
+
+        <!-- About Section (Skew Content) -->
+        <div class="skew-content">
+            <section id="about" class="py-20 md:py-32 px-6 md:px-12 bg-luxury-bg relative z-10">
+                <div class="max-w-[1200px] mx-auto">
+                    <div class="mb-12 md:mb-20 fade-in-up">
+                        <h2 class="text-4xl md:text-5xl font-serif text-luxury-text mb-4">Our Mandate</h2>
+                        <div class="h-[1px] w-24 bg-luxury-gold"></div>
                     </div>
-                    <div class="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-center relative h-1/2 md:h-full">
-                        <div class="absolute top-6 right-6 md:top-8 md:right-8 portfolio-tag px-3 py-1 rounded-full text-[10px] md:text-xs uppercase tracking-widest text-white bg-green-500">Early</div>
-                        <h3 class="text-2xl md:text-3xl font-serif mb-2 md:mb-4 text-white">Terapush India</h3>
-                        <p class="text-gray-400 text-sm md:text-base mb-4 md:mb-8 line-clamp-3">A unified platform bridging the gap between startups, investors, and talent.</p>
-                        <div class="grid grid-cols-2 gap-4 mb-4 md:mb-8">
-                            <div><div class="text-lg md:text-2xl font-light text-white">Pre-Seed</div><div class="text-[10px] md:text-xs text-gray-500 uppercase">Stage</div></div>
-                            <div><div class="text-lg md:text-2xl font-light text-white">Bengaluru</div><div class="text-[10px] md:text-xs text-gray-500 uppercase">HQ</div></div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Venture Capital -->
+                        <div class="hover-trigger md:col-span-2 bento-card bg-white p-8 md:p-10 rounded-[32px] border border-gray-100 relative overflow-hidden min-h-[320px] flex flex-col justify-between cursor-pointer group">
+                            <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-blue-50 to-transparent rounded-full -mr-10 -mt-10 z-0 transition-transform duration-700 group-hover:scale-125"></div>
+                            <div class="relative z-10 pointer-events-none">
+                                <div class="w-12 h-12 rounded-full bg-luxury-bg flex items-center justify-center mb-6">
+                                    <svg class="w-6 h-6 text-luxury-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                </div>
+                                <h3 class="text-2xl font-medium mb-2">Venture Capital</h3>
+                                <p class="text-luxury-gray max-w-md text-sm md:text-base">Backing high-conviction founders building the future. We invest in early-stage startups with scalable technological advantages.</p>
+                            </div>
+                            <div class="mt-8 flex items-center gap-2 text-sm font-medium text-luxury-text relative z-10 pointer-events-none">
+                                View Portfolio <span class="text-luxury-gold">&rarr;</span>
+                            </div>
                         </div>
-                        <a href="https://terapush.in" class="hover-trigger text-luxury-gold text-sm hover:underline flex items-center gap-2">Visit Website &rarr;</a>
-                    </div>
-                </div>
 
-                <!-- Card 2: MRKT LABS -->
-                <div class="hover-trigger w-full md:w-[50vw] shrink-0 h-[550px] md:h-[60vh] bg-[#1c1c1e] rounded-[32px] border border-white/10 flex flex-col md:flex-row overflow-hidden group relative">
-                    <div class="w-full md:w-1/2 bg-gradient-to-br from-red-900 to-black relative overflow-hidden flex items-center justify-center h-1/2 md:h-full">
-                        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
-                        <div class="text-4xl md:text-5xl font-bold tracking-tight text-white z-10">MRKT LABS.</div>
-                    </div>
-                    <div class="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-center relative h-1/2 md:h-full">
-                        <div class="absolute top-6 right-6 md:top-8 md:right-8 portfolio-tag px-3 py-1 rounded-full text-[10px] md:text-xs uppercase tracking-widest text-white bg-green-500">Early</div>
-                        <h3 class="text-2xl md:text-3xl font-serif mb-2 md:mb-4 text-white">Markets Labs</h3>
-                        <p class="text-gray-400 text-sm md:text-base mb-4 md:mb-8 line-clamp-3">A media house working on new media initiatives and ad forms across social platforms.</p>
-                        <div class="grid grid-cols-2 gap-4 mb-4 md:mb-8">
-                            <div><div class="text-lg md:text-2xl font-light text-white">Pre-Seed</div><div class="text-[10px] md:text-xs text-gray-500 uppercase">Stage</div></div>
-                            <div><div class="text-lg md:text-2xl font-light text-white">Bengaluru</div><div class="text-[10px] md:text-xs text-gray-500 uppercase">HQ</div></div>
+                        <!-- Asset Allocation -->
+                        <div class="hover-trigger md:col-span-1 bento-card bg-white p-8 md:p-10 rounded-[32px] border border-gray-100 flex flex-col justify-between">
+                            <div class="w-12 h-12 rounded-full bg-luxury-bg flex items-center justify-center mb-6">
+                                <svg class="w-6 h-6 text-luxury-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                            </div>
+                            <div>
+                                <h3 class="text-2xl font-medium mb-2">Asset Allocation</h3>
+                                <p class="text-luxury-gray text-sm md:text-base">Diversified growth across equities, real estate, and private markets.</p>
+                            </div>
                         </div>
-                        <a href="#" class="hover-trigger text-luxury-gold text-sm hover:underline flex items-center gap-2">Visit Website &rarr;</a>
-                    </div>
-                </div>
 
-                <!-- Card 3: Tantav -->
-                <div class="hover-trigger w-full md:w-[50vw] shrink-0 h-[550px] md:h-[60vh] bg-[#1c1c1e] rounded-[32px] border border-white/10 flex flex-col md:flex-row overflow-hidden group relative">
-                    <div class="w-full md:w-1/2 bg-gradient-to-br from-yellow-900 to-black relative overflow-hidden flex items-center justify-center h-1/2 md:h-full">
-                        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
-                        <div class="text-4xl md:text-5xl font-bold tracking-tight text-white z-10">Tantav.</div>
-                    </div>
-                    <div class="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-center relative h-1/2 md:h-full">
-                        <div class="absolute top-6 right-6 md:top-8 md:right-8 portfolio-tag px-3 py-1 rounded-full text-[10px] md:text-xs uppercase tracking-widest text-white bg-green-500">Early</div>
-                        <h3 class="text-2xl md:text-3xl font-serif mb-2 md:mb-4 text-white">Happy Consumer</h3>
-                        <p class="text-gray-400 text-sm md:text-base mb-4 md:mb-8 line-clamp-3">A fashion and apparel brand dealing in premium and luxury apparel goods.</p>
-                        <div class="grid grid-cols-2 gap-4 mb-4 md:mb-8">
-                            <div><div class="text-lg md:text-2xl font-light text-white">Seed</div><div class="text-[10px] md:text-xs text-gray-500 uppercase">Stage</div></div>
-                            <div><div class="text-lg md:text-2xl font-light text-white">Bengaluru</div><div class="text-[10px] md:text-xs text-gray-500 uppercase">HQ</div></div>
+                        <!-- Legacy -->
+                        <div class="hover-trigger md:col-span-3 bento-card bg-luxury-dark text-white p-8 md:p-10 rounded-[32px] border border-gray-800 relative overflow-hidden flex flex-col md:flex-row items-center justify-between">
+                            <div class="max-w-2xl relative z-10 mb-6 md:mb-0 pointer-events-none">
+                                <h3 class="text-2xl font-medium mb-4">The Family Legacy</h3>
+                                <p class="text-gray-400 leading-relaxed text-sm md:text-base">
+                                    Under the leadership of <strong>Vikramji Hirachandji Bafna</strong>, HMB Group combines traditional values of integrity and prudence with a modern investment outlook.
+                                </p>
+                            </div>
+                            <div class="relative z-10 pointer-events-none">
+                                <div class="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center text-luxury-gold">
+                                    <span class="font-serif text-2xl italic">VB</span>
+                                </div>
+                            </div>
                         </div>
-                        <a href="#" class="hover-trigger text-luxury-gold text-sm hover:underline flex items-center gap-2">Visit Website &rarr;</a>
                     </div>
                 </div>
+            </section>
 
-                <!-- Card 4: Peter's Joy -->
-                <div class="hover-trigger w-full md:w-[50vw] shrink-0 h-[550px] md:h-[60vh] bg-[#1c1c1e] rounded-[32px] border border-white/10 flex flex-col md:flex-row overflow-hidden group relative">
-                    <div class="w-full md:w-1/2 bg-gradient-to-br from-green-900 to-black relative overflow-hidden flex items-center justify-center h-1/2 md:h-full">
-                        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
-                        <div class="text-4xl md:text-5xl font-bold tracking-tight text-white z-10">Peter's Joy.</div>
+            <!-- Strategy Section -->
+            <section id="strategy" class="py-20 md:py-32 px-6 md:px-12 bg-white relative z-10">
+                <div class="max-w-[1200px] mx-auto">
+                    <div class="mb-16 md:mb-20 fade-in-up text-center">
+                        <span class="text-luxury-gold uppercase tracking-widest text-xs font-bold mb-4 block">Our Strategy</span>
+                        <h2 class="text-3xl md:text-5xl font-serif text-luxury-text mb-4">A Blueprint for Enduring Growth</h2>
+                        <p class="text-luxury-gray max-w-2xl mx-auto text-base md:text-lg font-light">We combine disciplined capital allocation with opportunity-driven venture investments.</p>
                     </div>
-                    <div class="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-center relative h-1/2 md:h-full">
-                        <div class="absolute top-6 right-6 md:top-8 md:right-8 portfolio-tag px-3 py-1 rounded-full text-[10px] md:text-xs uppercase tracking-widest text-white bg-green-500">Early</div>
-                        <h3 class="text-2xl md:text-3xl font-serif mb-2 md:mb-4 text-white">Exotic Beverages</h3>
-                        <p class="text-gray-400 text-sm md:text-base mb-4 md:mb-8 line-clamp-3">A brand that produces and delivers condiments and beverages.</p>
-                        <div class="grid grid-cols-2 gap-4 mb-4 md:mb-8">
-                            <div><div class="text-lg md:text-2xl font-light text-white">Pre-Seed</div><div class="text-[10px] md:text-xs text-gray-500 uppercase">Stage</div></div>
-                            <div><div class="text-lg md:text-2xl font-light text-white">Bengaluru</div><div class="text-[10px] md:text-xs text-gray-500 uppercase">HQ</div></div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+                        <div class="hover-trigger bento-card p-8 md:p-10 bg-[#f5f5f7] border border-gray-200 rounded-[28px]">
+                            <h3 class="text-xl md:text-2xl font-serif mb-3">Capital Preservation</h3>
+                            <p class="text-luxury-gray text-sm">Risk-managed allocation across multi-asset classes designed to safeguard family wealth.</p>
                         </div>
-                        <a href="#" class="hover-trigger text-luxury-gold text-sm hover:underline flex items-center gap-2">Visit Website &rarr;</a>
+                        <div class="hover-trigger bento-card p-8 md:p-10 bg-[#f5f5f7] border border-gray-200 rounded-[28px]">
+                            <h3 class="text-xl md:text-2xl font-serif mb-3">Founder-First</h3>
+                            <p class="text-luxury-gray text-sm">Backing resilient founders solving fundamental problems with defensible moats.</p>
+                        </div>
+                        <div class="hover-trigger bento-card p-8 md:p-10 bg-[#f5f5f7] border border-gray-200 rounded-[28px]">
+                            <h3 class="text-xl md:text-2xl font-serif mb-3">Legacy & Continuity</h3>
+                            <p class="text-luxury-gray text-sm">A long-term stewardship approach grounded in family values and sustainability.</p>
+                        </div>
                     </div>
                 </div>
+            </section>
 
-                <!-- Thesis Panel -->
-                <div class="w-full md:w-[40vw] shrink-0 h-[300px] md:h-[60vh] bg-[#1c1c1e] rounded-[32px] border border-white/10 p-8 md:p-12 flex flex-col items-center justify-center text-center relative overflow-hidden">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-luxury-gold to-transparent opacity-50"></div>
-                    <h3 class="text-2xl md:text-3xl font-serif mb-4 text-white">The HMB Thesis</h3>
-                    <p class="text-gray-400 text-base md:text-lg">We are sector-agnostic but founder-obsessed. We look for resilience and clarity.</p>
+            <!-- Venture Section -->
+            <section id="ventures" class="dark-section bg-luxury-dark text-white overflow-hidden relative py-20 md:py-0">
+                <div class="horizontal-container block md:h-screen md:flex md:items-center">
+                    <div class="horizontal-wrapper flex flex-col md:flex-row gap-16 md:gap-20 px-6 md:px-32 items-center w-full md:w-max">
+                        
+                        <div class="w-full md:w-[40vw] shrink-0 text-center md:text-left">
+                            <span class="text-luxury-gold uppercase tracking-widest text-xs font-bold mb-4 block">Current Portfolio</span>
+                            <h2 class="text-4xl md:text-7xl font-serif mb-6 md:mb-8 text-white">Fueling Innovation.</h2>
+                            <p class="text-lg md:text-xl text-gray-400 font-light max-w-xl mx-auto md:mx-0 leading-relaxed">
+                                We identify and partner with disruptors. Our venture arm focuses on technology-driven startups.
+                            </p>
+                        </div>
+
+                        <!-- Card 1 -->
+                        <div class="hover-trigger w-full md:w-[50vw] shrink-0 h-[550px] md:h-[60vh] bg-[#1c1c1e] rounded-[32px] border border-white/10 flex flex-col md:flex-row overflow-hidden group relative">
+                            <div class="w-full md:w-1/2 bg-gradient-to-br from-indigo-900 to-black relative overflow-hidden flex items-center justify-center h-1/2 md:h-full">
+                                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
+                                <div class="text-4xl md:text-5xl font-bold tracking-tight text-white z-10">Terapush.</div>
+                            </div>
+                            <div class="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-center relative h-1/2 md:h-full">
+                                <div class="absolute top-6 right-6 md:top-8 md:right-8 portfolio-tag px-3 py-1 rounded-full text-[10px] md:text-xs uppercase tracking-widest text-white bg-green-500">Early</div>
+                                <h3 class="text-2xl md:text-3xl font-serif mb-2 md:mb-4 text-white">Terapush India</h3>
+                                <p class="text-gray-400 text-sm md:text-base mb-4 md:mb-8 line-clamp-3">A unified platform bridging the gap between startups, investors, and talent.</p>
+                                <a href="https://terapush.in" class="hover-trigger text-luxury-gold text-sm hover:underline flex items-center gap-2">Visit Website &rarr;</a>
+                            </div>
+                        </div>
+
+                        <!-- Card 2 -->
+                        <div class="hover-trigger w-full md:w-[50vw] shrink-0 h-[550px] md:h-[60vh] bg-[#1c1c1e] rounded-[32px] border border-white/10 flex flex-col md:flex-row overflow-hidden group relative">
+                            <div class="w-full md:w-1/2 bg-gradient-to-br from-red-900 to-black relative overflow-hidden flex items-center justify-center h-1/2 md:h-full">
+                                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
+                                <div class="text-4xl md:text-5xl font-bold tracking-tight text-white z-10">MRKT LABS.</div>
+                            </div>
+                            <div class="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-center relative h-1/2 md:h-full">
+                                <div class="absolute top-6 right-6 md:top-8 md:right-8 portfolio-tag px-3 py-1 rounded-full text-[10px] md:text-xs uppercase tracking-widest text-white bg-green-500">Early</div>
+                                <h3 class="text-2xl md:text-3xl font-serif mb-2 md:mb-4 text-white">Markets Labs</h3>
+                                <p class="text-gray-400 text-sm md:text-base mb-4 md:mb-8 line-clamp-3">A media house working on new media initiatives and ad forms across social platforms.</p>
+                                <a href="#" class="hover-trigger text-luxury-gold text-sm hover:underline flex items-center gap-2">Visit Website &rarr;</a>
+                            </div>
+                        </div>
+
+                        <!-- Card 3 -->
+                        <div class="hover-trigger w-full md:w-[50vw] shrink-0 h-[550px] md:h-[60vh] bg-[#1c1c1e] rounded-[32px] border border-white/10 flex flex-col md:flex-row overflow-hidden group relative">
+                            <div class="w-full md:w-1/2 bg-gradient-to-br from-yellow-900 to-black relative overflow-hidden flex items-center justify-center h-1/2 md:h-full">
+                                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
+                                <div class="text-4xl md:text-5xl font-bold tracking-tight text-white z-10">Tantav.</div>
+                            </div>
+                            <div class="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-center relative h-1/2 md:h-full">
+                                <div class="absolute top-6 right-6 md:top-8 md:right-8 portfolio-tag px-3 py-1 rounded-full text-[10px] md:text-xs uppercase tracking-widest text-white bg-green-500">Early</div>
+                                <h3 class="text-2xl md:text-3xl font-serif mb-2 md:mb-4 text-white">Happy Consumer</h3>
+                                <p class="text-gray-400 text-sm md:text-base mb-4 md:mb-8 line-clamp-3">A fashion and apparel brand dealing in premium and luxury apparel goods.</p>
+                                <a href="#" class="hover-trigger text-luxury-gold text-sm hover:underline flex items-center gap-2">Visit Website &rarr;</a>
+                            </div>
+                        </div>
+
+                         <!-- Card 4 -->
+                        <div class="hover-trigger w-full md:w-[50vw] shrink-0 h-[550px] md:h-[60vh] bg-[#1c1c1e] rounded-[32px] border border-white/10 flex flex-col md:flex-row overflow-hidden group relative">
+                            <div class="w-full md:w-1/2 bg-gradient-to-br from-green-900 to-black relative overflow-hidden flex items-center justify-center h-1/2 md:h-full">
+                                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
+                                <div class="text-4xl md:text-5xl font-bold tracking-tight text-white z-10">Peter's Joy.</div>
+                            </div>
+                            <div class="w-full md:w-1/2 p-6 md:p-10 flex flex-col justify-center relative h-1/2 md:h-full">
+                                <div class="absolute top-6 right-6 md:top-8 md:right-8 portfolio-tag px-3 py-1 rounded-full text-[10px] md:text-xs uppercase tracking-widest text-white bg-green-500">Early</div>
+                                <h3 class="text-2xl md:text-3xl font-serif mb-2 md:mb-4 text-white">Exotic Beverages</h3>
+                                <p class="text-gray-400 text-sm md:text-base mb-4 md:mb-8 line-clamp-3">A brand that produces and delivers condiments and beverages.</p>
+                                <a href="#" class="hover-trigger text-luxury-gold text-sm hover:underline flex items-center gap-2">Visit Website &rarr;</a>
+                            </div>
+                        </div>
+
+                        <div class="w-full md:w-[40vw] shrink-0 h-[300px] md:h-[60vh] bg-[#1c1c1e] rounded-[32px] border border-white/10 p-8 md:p-12 flex flex-col items-center justify-center text-center relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-luxury-gold to-transparent opacity-50"></div>
+                            <h3 class="text-2xl md:text-3xl font-serif mb-4 text-white">The HMB Thesis</h3>
+                            <p class="text-gray-400 text-base md:text-lg">We are sector-agnostic but founder-obsessed.</p>
+                        </div>
+                    </div>
                 </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- STICKY FOOTER -->
+    <div class="sticky-footer-wrapper bg-white">
+        <footer id="contact" class="text-luxury-text pt-20 pb-12 rounded-t-[40px] h-full flex flex-col justify-between">
+            <div class="max-w-4xl mx-auto px-6 text-center">
+                <h2 class="text-3xl md:text-5xl font-serif mb-6 md:mb-8 text-luxury-text">Have an idea?</h2>
+                <p class="text-luxury-gray mb-10 md:mb-12 text-base md:text-lg font-light max-w-xl mx-auto">
+                    HMB Group operates with discretion. For investment proposals, please contact us directly.
+                </p>
                 
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer id="contact" class="bg-white text-luxury-text pt-20 md:pt-32 pb-12 rounded-t-[40px] relative z-20 -mt-10 shadow-[0_-20px_40px_rgba(0,0,0,0.05)]">
-        <div class="max-w-4xl mx-auto px-6 text-center">
-            <h2 class="text-3xl md:text-5xl font-serif mb-6 md:mb-8 text-luxury-text">Have an idea?</h2>
-            <p class="text-luxury-gray mb-10 md:mb-12 text-base md:text-lg font-light max-w-xl mx-auto">
-                HMB Group operates with discretion. For investment proposals, please contact us directly.
-            </p>
-            
-            <div class="bg-[#f5f5f7] p-8 md:p-12 rounded-[32px] max-w-2xl mx-auto mb-12 border border-gray-100">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
-                    <div>
-                        <span class="text-xs font-bold uppercase tracking-widest text-luxury-gold mb-2 block">Email</span>
-                        <a href="mailto:harsh@grouphmb.in" class="hover-trigger text-lg md:text-xl font-medium hover:text-luxury-gold break-all">harsh@grouphmb.in</a>
-                    </div>
-                    <div>
-                        <span class="text-xs font-bold uppercase tracking-widest text-luxury-gold mb-2 block">Phone</span>
-                        <a href="tel:+918296733414" class="hover-trigger text-lg md:text-xl font-medium hover:text-luxury-gold">+91 82967 33414</a>
+                <div class="bg-[#f5f5f7] p-8 md:p-12 rounded-[32px] max-w-2xl mx-auto mb-12 border border-gray-100">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-widest text-luxury-gold mb-2 block">Email</span>
+                            <a href="mailto:harsh@grouphmb.in" class="hover-trigger text-lg md:text-xl font-medium hover:text-luxury-gold break-all">harsh@grouphmb.in</a>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-widest text-luxury-gold mb-2 block">Phone</span>
+                            <a href="tel:+918296733414" class="hover-trigger text-lg md:text-xl font-medium hover:text-luxury-gold">+91 82967 33414</a>
+                        </div>
                     </div>
                 </div>
+
+                <a href="mailto:harsh@grouphmb.in" class="magnetic-btn hover-trigger bg-luxury-dark text-white px-8 py-4 rounded-full font-medium text-base md:text-lg flex items-center justify-center mx-auto gap-3 inline-flex hover:bg-black transition-colors">
+                    <span>Send Investment Deck</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                </a>
             </div>
 
-            <!-- MAGNETIC FOOTER BUTTON -->
-            <a href="mailto:harsh@grouphmb.in" class="magnetic-btn hover-trigger bg-luxury-dark text-white px-8 py-4 rounded-full font-medium text-base md:text-lg flex items-center justify-center mx-auto gap-3 inline-flex hover:bg-black transition-colors">
-                <span>Send Investment Deck</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </a>
-        </div>
-
-        <div class="mt-20 md:mt-32 border-t border-gray-100 max-w-6xl mx-auto px-6 pt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm text-gray-400">
-            <div>
-                <h4 class="text-luxury-text mb-2 font-serif text-lg font-bold">HMB GROUP.</h4>
-                <p>Office of Vikramji Hirachandji Bafna</p>
-                <p>India</p>
+            <div class="mt-12 border-t border-gray-100 max-w-6xl mx-auto px-6 pt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm text-gray-400 w-full">
+                <div>
+                    <h4 class="text-luxury-text mb-2 font-serif text-lg font-bold">HMB GROUP.</h4>
+                    <p>Office of Vikramji Hirachandji Bafna</p>
+                </div>
+                <div class="md:text-right">
+                    &copy; 2025 HMB Group.
+                </div>
             </div>
-            <div class="md:text-right">
-                &copy; 2025 HMB Group.
-            </div>
-        </div>
-    </footer>
+        </footer>
+    </div>
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -457,82 +423,105 @@
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
 
     <script>
-        // --- 1. DECODE TEXT EFFECT (Hacker Effect) ---
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        function scrambleText(event) {
-            let iteration = 0;
-            const target = event.target;
-            const originalText = target.dataset.value; 
-            
-            if(target.interval) clearInterval(target.interval);
-            
-            target.interval = setInterval(() => {
-                target.innerText = originalText
-                    .split("")
-                    .map((letter, index) => {
-                        if(index < iteration) return originalText[index];
-                        return letters[Math.floor(Math.random() * 26)];
-                    })
-                    .join("");
-                
-                if(iteration >= originalText.length){ 
-                    clearInterval(target.interval);
+        gsap.registerPlugin(ScrollTrigger);
+
+        // --- 1. STICKY FOOTER LOGIC ---
+        function setFooterHeight() {
+            const footer = document.querySelector('.sticky-footer-wrapper');
+            const main = document.querySelector('.main-content');
+            main.style.marginBottom = `${footer.offsetHeight}px`;
+        }
+        window.addEventListener('resize', setFooterHeight);
+        window.addEventListener('load', setFooterHeight);
+
+        // --- 2. SKEW EFFECT ON SCROLL (JELLY EFFECT) ---
+        let proxy = { skew: 0 },
+            skewSetter = gsap.quickSetter(".skew-content", "skewY", "deg"),
+            clamp = gsap.utils.clamp(-20, 20);
+
+        ScrollTrigger.create({
+            onUpdate: (self) => {
+                let skew = clamp(self.getVelocity() / -300);
+                if (Math.abs(skew) > Math.abs(proxy.skew)) {
+                    proxy.skew = skew;
+                    gsap.to(proxy, {
+                        skew: 0,
+                        duration: 0.8,
+                        ease: "power3",
+                        overwrite: true,
+                        onUpdate: () => skewSetter(proxy.skew)
+                    });
                 }
-                iteration += 1 / 3;
-            }, 30);
+            }
+        });
+
+        // --- 3. TEXT REVEAL ANIMATIONS (Mask Up) ---
+        function animateReveals() {
+            gsap.utils.toArray('.reveal-inner').forEach(element => {
+                gsap.to(element, {
+                    scrollTrigger: { trigger: element, start: "top 90%" },
+                    y: "0%", duration: 1.2, ease: "power4.out"
+                });
+            });
         }
 
-        // --- 2. LOADING SCREEN ---
+        // --- 4. PRELOADER ---
         function startLoader() {
             const counter = document.querySelector(".counter");
             let count = 0;
-            
             document.body.style.overflow = "hidden";
-
             const interval = setInterval(() => {
                 count += Math.floor(Math.random() * 5) + 1; 
                 if (count > 100) count = 100;
                 counter.textContent = count;
-
                 if (count === 100) {
                     clearInterval(interval);
-                    const tl = gsap.timeline();
-                    tl.to(".counter-container", { y: -50, opacity: 0, duration: 0.5, delay: 0.2 })
+                    gsap.timeline()
+                      .to(".counter-container", { y: -50, opacity: 0, duration: 0.5, delay: 0.2 })
                       .to(".preloader", { 
-                          y: "-100%", 
-                          duration: 1.2, 
-                          ease: "power4.inOut",
+                          y: "-100%", duration: 1.2, ease: "power4.inOut",
                           onComplete: () => {
                               document.body.style.overflow = "auto";
-                              startHeroAnimations();
+                              startHeroAnimations(); // Standard fade animations
+                              animateReveals(); // Trigger Mask animations
+                              setFooterHeight(); // Recalculate footer
                           }
                       });
                 }
             }, 30);
         }
 
-        // --- 3. CUSTOM CURSOR & MAGNETICS ---
+        // --- 5. STANDARD ANIMATIONS & LOGIC ---
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        function scrambleText(event) {
+            let iteration = 0;
+            const target = event.target;
+            const originalText = target.dataset.value; 
+            if(target.interval) clearInterval(target.interval);
+            target.interval = setInterval(() => {
+                target.innerText = originalText.split("").map((letter, index) => {
+                    if(index < iteration) return originalText[index];
+                    return letters[Math.floor(Math.random() * 26)];
+                }).join("");
+                if(iteration >= originalText.length) clearInterval(target.interval);
+                iteration += 1 / 3;
+            }, 30);
+        }
+
         function initCursorAndMagnets() {
             const cursorDot = document.querySelector(".cursor-dot");
             const cursorOutline = document.querySelector(".cursor-outline");
-            
             if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
-                
                 let xTo = gsap.quickTo(cursorOutline, "left", { duration: 0.2, ease: "power3" });
                 let yTo = gsap.quickTo(cursorOutline, "top", { duration: 0.2, ease: "power3" });
                 let xToDot = gsap.quickTo(cursorDot, "left", { duration: 0.1, ease: "power3" });
                 let yToDot = gsap.quickTo(cursorDot, "top", { duration: 0.1, ease: "power3" });
 
                 window.addEventListener("mousemove", (e) => {
-                    xTo(e.clientX);
-                    yTo(e.clientY);
-                    xToDot(e.clientX);
-                    yToDot(e.clientY);
+                    xTo(e.clientX); yTo(e.clientY); xToDot(e.clientX); yToDot(e.clientY);
                 });
 
-                // Hover Scaling
-                const hoverTriggers = document.querySelectorAll("a, button, .hover-trigger, .bento-card");
-                hoverTriggers.forEach((trigger) => {
+                document.querySelectorAll("a, button, .hover-trigger, .bento-card").forEach((trigger) => {
                     trigger.addEventListener("mouseenter", () => {
                         document.body.classList.add("hovering");
                         gsap.to(cursorOutline, { scale: 1.5, duration: 0.3 });
@@ -543,14 +532,11 @@
                     });
                 });
 
-                // Magnetic Buttons
-                const magnets = document.querySelectorAll('.magnetic-btn');
-                magnets.forEach((magnet) => {
+                document.querySelectorAll('.magnetic-btn').forEach((magnet) => {
                     magnet.addEventListener('mousemove', (e) => {
                         const position = magnet.getBoundingClientRect();
                         const x = e.clientX - position.left - position.width / 2;
                         const y = e.clientY - position.top - position.height / 2;
-                        
                         gsap.to(magnet, { x: x * 0.3, y: y * 0.3, duration: 0.3, ease: "power2.out" });
                         gsap.to(magnet.children, { x: x * 0.1, y: y * 0.1, duration: 0.3, ease: "power2.out" });
                     });
@@ -560,74 +546,49 @@
                     });
                 });
 
-                // Dark Section Inversion
-                const darkSections = document.querySelectorAll(".dark-section, .bg-luxury-dark");
-                darkSections.forEach(section => {
+                document.querySelectorAll(".dark-section, .bg-luxury-dark").forEach(section => {
                     section.addEventListener("mouseenter", () => document.body.classList.add("dark-cursor"));
                     section.addEventListener("mouseleave", () => document.body.classList.remove("dark-cursor"));
                 });
             }
         }
 
-        // --- 4. 3D TILT FOR BENTO CARDS ---
         function initTilt() {
             if (window.matchMedia("(min-width: 768px)").matches) {
-                const cards = document.querySelectorAll(".bento-card");
-                
-                cards.forEach(card => {
+                document.querySelectorAll(".bento-card").forEach(card => {
                     card.addEventListener("mousemove", (e) => {
                         const rect = card.getBoundingClientRect();
                         const x = e.clientX - rect.left;
                         const y = e.clientY - rect.top;
-                        
                         const xPct = (x / rect.width) - 0.5;
                         const yPct = (y / rect.height) - 0.5;
-                        
-                        const rotateX = yPct * -5; 
-                        const rotateY = xPct * 5;
-                        
                         gsap.to(card, {
                             transformPerspective: 1000,
-                            rotationX: rotateX,
-                            rotationY: rotateY,
-                            scale: 1.02, // Slight scale on hover
-                            duration: 0.5,
-                            ease: "power2.out"
+                            rotationX: yPct * -5, rotationY: xPct * 5, scale: 1.02,
+                            duration: 0.5, ease: "power2.out"
                         });
                     });
-                    
                     card.addEventListener("mouseleave", () => {
-                        gsap.to(card, {
-                            rotationX: 0,
-                            rotationY: 0,
-                            scale: 1,
-                            duration: 1,
-                            ease: "elastic.out(1, 0.5)"
-                        });
+                        gsap.to(card, { rotationX: 0, rotationY: 0, scale: 1, duration: 1, ease: "elastic.out(1, 0.5)" });
                     });
                 });
             }
         }
 
-        // --- 5. STANDARD ANIMATIONS ---
         function startHeroAnimations() {
-             const tl = gsap.timeline();
-             tl.to(".hero-title", { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" })
-               .to(".hero-sub", { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" }, "-=1")
-               .to(".hero-scroll", { opacity: 1, duration: 1 }, "-=0.5");
+             gsap.to(".hero-scroll", { opacity: 1, duration: 1, delay: 1 });
         }
 
-        // Initialize
+        // --- INIT ---
         document.addEventListener("DOMContentLoaded", () => {
             startLoader();
             initCursorAndMagnets();
             initTilt();
         });
 
-        // Mobile Menu
+        // Mobile Menu Logic with Stagger
         const menuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
-        const mobileLinks = document.querySelectorAll('.mobile-link');
         let isMenuOpen = false;
 
         function toggleMenu() {
@@ -636,37 +597,29 @@
                 mobileMenu.classList.remove('menu-closed');
                 mobileMenu.classList.add('menu-open');
                 document.body.style.overflow = 'hidden'; 
+                // Stagger Text Reveal in Menu
+                gsap.to(".mobile-link span", { y: 0, duration: 0.8, stagger: 0.1, ease: "power3.out" });
             } else {
                 mobileMenu.classList.remove('menu-open');
                 mobileMenu.classList.add('menu-closed');
                 document.body.style.overflow = 'auto'; 
+                gsap.to(".mobile-link span", { y: 40, duration: 0.5, ease: "power3.in" });
             }
         }
         menuBtn.addEventListener('click', toggleMenu);
-        mobileLinks.forEach(link => link.addEventListener('click', toggleMenu));
+        document.querySelectorAll('.mobile-link').forEach(link => link.addEventListener('click', toggleMenu));
 
         // Lenis Smooth Scroll
-        const lenis = new Lenis({
-            duration: 1.2,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            smooth: true,
-        });
+        const lenis = new Lenis({ duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smooth: true });
         function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
         requestAnimationFrame(raf);
 
-        // GSAP Setup
-        gsap.registerPlugin(ScrollTrigger);
-
+        // General Fade Ups
         gsap.utils.toArray('.fade-in-up').forEach(element => {
-            gsap.from(element, {
-                scrollTrigger: { trigger: element, start: "top 85%" },
-                opacity: 0, y: 40, duration: 1, ease: "power3.out"
-            });
+            gsap.from(element, { scrollTrigger: { trigger: element, start: "top 85%" }, opacity: 0, y: 40, duration: 1, ease: "power3.out" });
         });
-
         gsap.from(".bento-card", {
-            scrollTrigger: { trigger: "#about", start: "top 75%" },
-            y: 50, opacity: 0, duration: 1, stagger: 0.15, ease: "power3.out"
+            scrollTrigger: { trigger: "#about", start: "top 75%" }, y: 50, opacity: 0, duration: 1, stagger: 0.15, ease: "power3.out"
         });
 
         // Horizontal Scroll
@@ -677,19 +630,15 @@
                 x: () => -(sectionsContainer.scrollWidth - window.innerWidth),
                 ease: "none",
                 scrollTrigger: {
-                    trigger: "#ventures",
-                    pin: true,
-                    scrub: 1,
-                    end: () => "+=" + sectionsContainer.scrollWidth,
-                    invalidateOnRefresh: true
+                    trigger: "#ventures", pin: true, scrub: 1,
+                    end: () => "+=" + sectionsContainer.scrollWidth, invalidateOnRefresh: true
                 }
             });
         });
 
         const navbar = document.getElementById('navbar');
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) navbar.classList.add('shadow-sm');
-            else navbar.classList.remove('shadow-sm');
+            if (window.scrollY > 50) navbar.classList.add('shadow-sm'); else navbar.classList.remove('shadow-sm');
         });
     </script>
 </body>
