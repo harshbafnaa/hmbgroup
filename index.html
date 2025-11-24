@@ -30,6 +30,9 @@
                             gold: "#d4af37",
                             dark: "#0a0a0a"
                         }
+                    },
+                    cursor: {
+                        'none': 'none',
                     }
                 }
             }
@@ -41,10 +44,17 @@
         html { scrollbar-width: none; }
         body { background-color: #f5f5f7; color: #1d1d1f; overflow-x: hidden; }
 
+        /* Disable default cursor only on non-touch devices */
+        @media (hover: hover) and (pointer: fine) {
+            body { cursor: none; }
+            a, button, .bento-card { cursor: none; }
+        }
+
         .ambient-glow {
             background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8) 0%, rgba(245, 245, 247, 0) 70%);
         }
 
+        /* Bento Card Hover */
         .bento-card {
             transition: transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1), box-shadow 0.6s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
@@ -65,26 +75,102 @@
         #mobile-menu { transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease; }
         .menu-open { transform: translateY(0%); opacity: 1; pointer-events: auto; }
         .menu-closed { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+
+        /* PRELOADER STYLES */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0a0a0a;
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #d4af37;
+        }
+        .counter-container {
+            position: relative;
+            overflow: hidden;
+        }
+        .counter {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            font-weight: 400;
+            line-height: 1;
+        }
+
+        /* CUSTOM CURSOR STYLES */
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+        }
+        
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #1d1d1f;
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(29, 29, 31, 0.5);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        /* Dark section cursor overrides */
+        body.dark-cursor .cursor-dot { background-color: #fff; }
+        body.dark-cursor .cursor-outline { border-color: rgba(255,255,255, 0.5); }
+
+        /* Hover State */
+        body.hovering .cursor-outline {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(212, 175, 55, 0.1); /* Gold tint */
+            border-color: #d4af37;
+        }
+        
+        @media (max-width: 768px) {
+            .cursor-dot, .cursor-outline { display: none; }
+        }
     </style>
 </head>
-<body>
+<body class="bg-luxury-bg">
+
+    <!-- PRELOADER -->
+    <div class="preloader">
+        <div class="counter-container">
+            <span class="counter">0</span><span class="text-2xl align-top">%</span>
+        </div>
+    </div>
+
+    <!-- CUSTOM CURSOR -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
 
     <!-- Navigation -->
-    <!-- FIX: Increased opacity on mobile (bg-[#f5f5f7]/95) to ensure visibility over dark sections -->
     <nav class="fixed top-0 w-full z-50 px-6 py-4 transition-all duration-300 backdrop-blur-xl bg-[#f5f5f7]/95 md:bg-[#f5f5f7]/80 border-b border-gray-200/50" id="navbar">
         <div class="max-w-[1400px] mx-auto flex justify-between items-center relative z-50">
-            <a href="#" class="text-xl md:text-2xl font-serif font-bold tracking-tight text-luxury-text">HMB GROUP.</a>
+            <a href="#" class="hover-trigger text-xl md:text-2xl font-serif font-bold tracking-tight text-luxury-text">HMB GROUP.</a>
             
             <!-- Desktop Menu -->
             <div class="hidden md:flex gap-8 text-sm font-medium text-luxury-gray">
-                <a href="#about" class="hover:text-luxury-text transition-colors">About</a>
-                <a href="#ventures" class="hover:text-luxury-text transition-colors">Venture Capital</a>
-                <a href="#strategy" class="hover:text-luxury-text transition-colors">Strategy</a>
-                <a href="#contact" class="hover:text-luxury-text transition-colors">Contact</a>
+                <a href="#about" class="hover-trigger hover:text-luxury-text transition-colors">About</a>
+                <a href="#ventures" class="hover-trigger hover:text-luxury-text transition-colors">Venture Capital</a>
+                <a href="#strategy" class="hover-trigger hover:text-luxury-text transition-colors">Strategy</a>
+                <a href="#contact" class="hover-trigger hover:text-luxury-text transition-colors">Contact</a>
             </div>
 
             <div class="flex items-center gap-4">
-                <button onclick="window.location.href='mailto:pitch@hmbgroup.com'" class="hidden md:flex items-center gap-2 px-5 py-2 rounded-full border border-gray-300 text-xs font-semibold uppercase tracking-widest hover:bg-luxury-text hover:text-white hover:border-luxury-text transition-all duration-300">
+                <button onclick="window.location.href='mailto:pitch@hmbgroup.com'" class="hover-trigger hidden md:flex items-center gap-2 px-5 py-2 rounded-full border border-gray-300 text-xs font-semibold uppercase tracking-widest hover:bg-luxury-text hover:text-white hover:border-luxury-text transition-all duration-300">
                     <span class="w-2 h-2 rounded-full bg-green-500"></span>
                     Pitch Us
                 </button>
@@ -97,7 +183,7 @@
         </div>
     </nav>
 
-    <!-- Mobile Menu Overlay (Z-40, below nav bar Z-50) -->
+    <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="fixed inset-0 bg-[#f5f5f7] z-40 flex flex-col items-center justify-center menu-closed md:hidden pt-20">
         <div class="flex flex-col gap-8 text-center text-2xl font-serif text-luxury-text">
             <a href="#about" class="mobile-link" onclick="toggleMenu()">About</a>
@@ -140,7 +226,7 @@
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <!-- Venture Capital Card -->
-                <div class="md:col-span-2 bento-card bg-white p-8 md:p-10 rounded-[32px] border border-gray-100 relative overflow-hidden min-h-[320px] flex flex-col justify-between cursor-pointer group">
+                <div class="hover-trigger md:col-span-2 bento-card bg-white p-8 md:p-10 rounded-[32px] border border-gray-100 relative overflow-hidden min-h-[320px] flex flex-col justify-between cursor-pointer group">
                     <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-blue-50 to-transparent rounded-full -mr-10 -mt-10 z-0 transition-transform duration-700 group-hover:scale-125"></div>
                     <div class="relative z-10">
                         <div class="w-12 h-12 rounded-full bg-luxury-bg flex items-center justify-center mb-6 group-hover:bg-luxury-text group-hover:text-white transition-colors">
@@ -155,7 +241,7 @@
                 </div>
 
                 <!-- Asset Allocation -->
-                <div class="md:col-span-1 bento-card bg-white p-8 md:p-10 rounded-[32px] border border-gray-100 flex flex-col justify-between">
+                <div class="hover-trigger md:col-span-1 bento-card bg-white p-8 md:p-10 rounded-[32px] border border-gray-100 flex flex-col justify-between">
                     <div class="w-12 h-12 rounded-full bg-luxury-bg flex items-center justify-center mb-6">
                         <svg class="w-6 h-6 text-luxury-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                     </div>
@@ -166,7 +252,7 @@
                 </div>
 
                 <!-- Legacy -->
-                <div class="md:col-span-3 bento-card bg-luxury-dark text-white p-8 md:p-10 rounded-[32px] border border-gray-800 relative overflow-hidden flex flex-col md:flex-row items-center justify-between">
+                <div class="hover-trigger md:col-span-3 bento-card bg-luxury-dark text-white p-8 md:p-10 rounded-[32px] border border-gray-800 relative overflow-hidden flex flex-col md:flex-row items-center justify-between">
                     <div class="max-w-2xl relative z-10 mb-6 md:mb-0">
                         <h3 class="text-2xl font-medium mb-4">The Family Legacy</h3>
                         <p class="text-gray-400 leading-relaxed text-sm md:text-base">
@@ -193,15 +279,15 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-                <div class="bento-card p-8 md:p-10 bg-[#f5f5f7] border border-gray-200 rounded-[28px]">
+                <div class="hover-trigger bento-card p-8 md:p-10 bg-[#f5f5f7] border border-gray-200 rounded-[28px]">
                     <h3 class="text-xl md:text-2xl font-serif mb-3">Capital Preservation</h3>
                     <p class="text-luxury-gray text-sm">Risk-managed allocation across multi-asset classes designed to safeguard family wealth.</p>
                 </div>
-                <div class="bento-card p-8 md:p-10 bg-[#f5f5f7] border border-gray-200 rounded-[28px]">
+                <div class="hover-trigger bento-card p-8 md:p-10 bg-[#f5f5f7] border border-gray-200 rounded-[28px]">
                     <h3 class="text-xl md:text-2xl font-serif mb-3">Founder-First</h3>
                     <p class="text-luxury-gray text-sm">Backing resilient founders solving fundamental problems with defensible moats.</p>
                 </div>
-                <div class="bento-card p-8 md:p-10 bg-[#f5f5f7] border border-gray-200 rounded-[28px]">
+                <div class="hover-trigger bento-card p-8 md:p-10 bg-[#f5f5f7] border border-gray-200 rounded-[28px]">
                     <h3 class="text-xl md:text-2xl font-serif mb-3">Legacy & Continuity</h3>
                     <p class="text-luxury-gray text-sm">A long-term stewardship approach grounded in family values and sustainability.</p>
                 </div>
@@ -209,11 +295,9 @@
         </div>
     </section>
 
-    <!-- Venture Section -->
-    <!-- FIX: Removed 'horizontal-container' complication on mobile. Default to block layout on mobile. -->
-    <section id="ventures" class="bg-luxury-dark text-white overflow-hidden relative py-20 md:py-0">
+    <!-- Venture Section (Dark Background - Cursor will invert here) -->
+    <section id="ventures" class="dark-section bg-luxury-dark text-white overflow-hidden relative py-20 md:py-0">
         
-        <!-- Wrapper: Block on Mobile (natural flow), Flex on Desktop (horizontal scroll) -->
         <div class="horizontal-container block md:h-screen md:flex md:items-center">
             
             <div class="horizontal-wrapper flex flex-col md:flex-row gap-16 md:gap-20 px-6 md:px-32 items-center w-full md:w-max">
@@ -228,7 +312,7 @@
                 </div>
 
                 <!-- Card 1: Terapush -->
-                <div class="w-full md:w-[50vw] shrink-0 h-[550px] md:h-[60vh] bg-[#1c1c1e] rounded-[32px] border border-white/10 flex flex-col md:flex-row overflow-hidden group relative">
+                <div class="hover-trigger w-full md:w-[50vw] shrink-0 h-[550px] md:h-[60vh] bg-[#1c1c1e] rounded-[32px] border border-white/10 flex flex-col md:flex-row overflow-hidden group relative">
                     <div class="w-full md:w-1/2 bg-gradient-to-br from-indigo-900 to-black relative overflow-hidden flex items-center justify-center h-1/2 md:h-full">
                         <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
                         <div class="text-4xl md:text-5xl font-bold tracking-tight text-white z-10">Terapush.</div>
@@ -241,12 +325,12 @@
                             <div><div class="text-lg md:text-2xl font-light text-white">Pre-Seed</div><div class="text-[10px] md:text-xs text-gray-500 uppercase">Stage</div></div>
                             <div><div class="text-lg md:text-2xl font-light text-white">Bengaluru</div><div class="text-[10px] md:text-xs text-gray-500 uppercase">HQ</div></div>
                         </div>
-                        <a href="https://terapush.in" class="text-luxury-gold text-sm hover:underline flex items-center gap-2">Visit Website &rarr;</a>
+                        <a href="https://terapush.in" class="hover-trigger text-luxury-gold text-sm hover:underline flex items-center gap-2">Visit Website &rarr;</a>
                     </div>
                 </div>
 
                 <!-- Card 2: MRKT LABS -->
-                <div class="w-full md:w-[50vw] shrink-0 h-[550px] md:h-[60vh] bg-[#1c1c1e] rounded-[32px] border border-white/10 flex flex-col md:flex-row overflow-hidden group relative">
+                <div class="hover-trigger w-full md:w-[50vw] shrink-0 h-[550px] md:h-[60vh] bg-[#1c1c1e] rounded-[32px] border border-white/10 flex flex-col md:flex-row overflow-hidden group relative">
                     <div class="w-full md:w-1/2 bg-gradient-to-br from-red-900 to-black relative overflow-hidden flex items-center justify-center h-1/2 md:h-full">
                         <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
                         <div class="text-4xl md:text-5xl font-bold tracking-tight text-white z-10">MRKT LABS.</div>
@@ -259,12 +343,12 @@
                             <div><div class="text-lg md:text-2xl font-light text-white">Pre-Seed</div><div class="text-[10px] md:text-xs text-gray-500 uppercase">Stage</div></div>
                             <div><div class="text-lg md:text-2xl font-light text-white">Bengaluru</div><div class="text-[10px] md:text-xs text-gray-500 uppercase">HQ</div></div>
                         </div>
-                        <a href="#" class="text-luxury-gold text-sm hover:underline flex items-center gap-2">Visit Website &rarr;</a>
+                        <a href="#" class="hover-trigger text-luxury-gold text-sm hover:underline flex items-center gap-2">Visit Website &rarr;</a>
                     </div>
                 </div>
 
                 <!-- Card 3: Tantav -->
-                <div class="w-full md:w-[50vw] shrink-0 h-[550px] md:h-[60vh] bg-[#1c1c1e] rounded-[32px] border border-white/10 flex flex-col md:flex-row overflow-hidden group relative">
+                <div class="hover-trigger w-full md:w-[50vw] shrink-0 h-[550px] md:h-[60vh] bg-[#1c1c1e] rounded-[32px] border border-white/10 flex flex-col md:flex-row overflow-hidden group relative">
                     <div class="w-full md:w-1/2 bg-gradient-to-br from-yellow-900 to-black relative overflow-hidden flex items-center justify-center h-1/2 md:h-full">
                         <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
                         <div class="text-4xl md:text-5xl font-bold tracking-tight text-white z-10">Tantav.</div>
@@ -277,12 +361,12 @@
                             <div><div class="text-lg md:text-2xl font-light text-white">Seed</div><div class="text-[10px] md:text-xs text-gray-500 uppercase">Stage</div></div>
                             <div><div class="text-lg md:text-2xl font-light text-white">Bengaluru</div><div class="text-[10px] md:text-xs text-gray-500 uppercase">HQ</div></div>
                         </div>
-                        <a href="#" class="text-luxury-gold text-sm hover:underline flex items-center gap-2">Visit Website &rarr;</a>
+                        <a href="#" class="hover-trigger text-luxury-gold text-sm hover:underline flex items-center gap-2">Visit Website &rarr;</a>
                     </div>
                 </div>
 
                 <!-- Card 4: Peter's Joy -->
-                <div class="w-full md:w-[50vw] shrink-0 h-[550px] md:h-[60vh] bg-[#1c1c1e] rounded-[32px] border border-white/10 flex flex-col md:flex-row overflow-hidden group relative">
+                <div class="hover-trigger w-full md:w-[50vw] shrink-0 h-[550px] md:h-[60vh] bg-[#1c1c1e] rounded-[32px] border border-white/10 flex flex-col md:flex-row overflow-hidden group relative">
                     <div class="w-full md:w-1/2 bg-gradient-to-br from-green-900 to-black relative overflow-hidden flex items-center justify-center h-1/2 md:h-full">
                         <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
                         <div class="text-4xl md:text-5xl font-bold tracking-tight text-white z-10">Peter's Joy.</div>
@@ -295,7 +379,7 @@
                             <div><div class="text-lg md:text-2xl font-light text-white">Pre-Seed</div><div class="text-[10px] md:text-xs text-gray-500 uppercase">Stage</div></div>
                             <div><div class="text-lg md:text-2xl font-light text-white">Bengaluru</div><div class="text-[10px] md:text-xs text-gray-500 uppercase">HQ</div></div>
                         </div>
-                        <a href="#" class="text-luxury-gold text-sm hover:underline flex items-center gap-2">Visit Website &rarr;</a>
+                        <a href="#" class="hover-trigger text-luxury-gold text-sm hover:underline flex items-center gap-2">Visit Website &rarr;</a>
                     </div>
                 </div>
 
@@ -322,16 +406,16 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
                     <div>
                         <span class="text-xs font-bold uppercase tracking-widest text-luxury-gold mb-2 block">Email</span>
-                        <a href="mailto:harsh@grouphmb.in" class="text-lg md:text-xl font-medium hover:text-luxury-gold break-all">harsh@grouphmb.in</a>
+                        <a href="mailto:harsh@grouphmb.in" class="hover-trigger text-lg md:text-xl font-medium hover:text-luxury-gold break-all">harsh@grouphmb.in</a>
                     </div>
                     <div>
                         <span class="text-xs font-bold uppercase tracking-widest text-luxury-gold mb-2 block">Phone</span>
-                        <a href="tel:+918296733414" class="text-lg md:text-xl font-medium hover:text-luxury-gold">+91 82967 33414</a>
+                        <a href="tel:+918296733414" class="hover-trigger text-lg md:text-xl font-medium hover:text-luxury-gold">+91 82967 33414</a>
                     </div>
                 </div>
             </div>
 
-            <a href="mailto:harsh@grouphmb.in" class="bg-luxury-dark text-white px-8 py-4 rounded-full font-medium text-base md:text-lg flex items-center justify-center mx-auto gap-3 inline-flex hover:bg-black transition-colors">
+            <a href="mailto:harsh@grouphmb.in" class="hover-trigger bg-luxury-dark text-white px-8 py-4 rounded-full font-medium text-base md:text-lg flex items-center justify-center mx-auto gap-3 inline-flex hover:bg-black transition-colors">
                 Send Investment Deck
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
@@ -355,7 +439,101 @@
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
 
     <script>
-        // 1. Mobile Menu Toggle Logic
+        // --- 1. Loading Screen Logic ---
+        function startLoader() {
+            const counter = document.querySelector(".counter");
+            let count = 0;
+            
+            // Disable scroll during load
+            document.body.style.overflow = "hidden";
+
+            // Update counter
+            const interval = setInterval(() => {
+                count += Math.floor(Math.random() * 5) + 1; 
+                if (count > 100) count = 100;
+                counter.textContent = count;
+
+                if (count === 100) {
+                    clearInterval(interval);
+                    // Reveal animation
+                    const tl = gsap.timeline();
+                    tl.to(".counter-container", { y: -50, opacity: 0, duration: 0.5, delay: 0.2 })
+                      .to(".preloader", { 
+                          y: "-100%", 
+                          duration: 1.2, 
+                          ease: "power4.inOut",
+                          onComplete: () => {
+                              document.body.style.overflow = "auto";
+                              // Start Hero Animations after loader finishes
+                              startHeroAnimations();
+                          }
+                      });
+                }
+            }, 30);
+        }
+
+        // --- 2. Custom Cursor Logic ---
+        function initCursor() {
+            const cursorDot = document.querySelector(".cursor-dot");
+            const cursorOutline = document.querySelector(".cursor-outline");
+            
+            // Only active on desktop
+            if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+                
+                // Use gsap.quickTo for better performance
+                let xTo = gsap.quickTo(cursorOutline, "left", { duration: 0.2, ease: "power3" });
+                let yTo = gsap.quickTo(cursorOutline, "top", { duration: 0.2, ease: "power3" });
+                
+                let xToDot = gsap.quickTo(cursorDot, "left", { duration: 0.1, ease: "power3" });
+                let yToDot = gsap.quickTo(cursorDot, "top", { duration: 0.1, ease: "power3" });
+
+                window.addEventListener("mousemove", (e) => {
+                    xTo(e.clientX);
+                    yTo(e.clientY);
+                    xToDot(e.clientX);
+                    yToDot(e.clientY);
+                });
+
+                // Hover Effects
+                const hoverTriggers = document.querySelectorAll("a, button, .hover-trigger");
+                
+                hoverTriggers.forEach((trigger) => {
+                    trigger.addEventListener("mouseenter", () => {
+                        document.body.classList.add("hovering");
+                        gsap.to(cursorOutline, { scale: 1.5, duration: 0.3 });
+                    });
+                    trigger.addEventListener("mouseleave", () => {
+                        document.body.classList.remove("hovering");
+                        gsap.to(cursorOutline, { scale: 1, duration: 0.3 });
+                    });
+                });
+
+                // Invert Color in Dark Sections
+                const darkSections = document.querySelectorAll(".dark-section, .bg-luxury-dark");
+                darkSections.forEach(section => {
+                    section.addEventListener("mouseenter", () => document.body.classList.add("dark-cursor"));
+                    section.addEventListener("mouseleave", () => document.body.classList.remove("dark-cursor"));
+                });
+            }
+        }
+
+        // --- 3. Hero Animations (Triggered after loader) ---
+        function startHeroAnimations() {
+             const tl = gsap.timeline();
+             tl.to(".hero-title", { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" })
+               .to(".hero-sub", { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" }, "-=1")
+               .to(".hero-scroll", { opacity: 1, duration: 1 }, "-=0.5");
+        }
+
+        // Initialize Everything
+        document.addEventListener("DOMContentLoaded", () => {
+            startLoader();
+            initCursor();
+        });
+
+        // --- 4. Existing Site Logic ---
+        
+        // Mobile Menu
         const menuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         const mobileLinks = document.querySelectorAll('.mobile-link');
@@ -373,15 +551,10 @@
                 document.body.style.overflow = 'auto'; 
             }
         }
-        
         menuBtn.addEventListener('click', toggleMenu);
-        
-        // Close menu when a link is clicked
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', toggleMenu);
-        });
+        mobileLinks.forEach(link => link.addEventListener('click', toggleMenu));
 
-        // 2. Lenis Smooth Scroll
+        // Lenis Smooth Scroll
         const lenis = new Lenis({
             duration: 1.2,
             easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -390,14 +563,8 @@
         function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
         requestAnimationFrame(raf);
 
-        // 3. GSAP Animations
+        // GSAP ScrollTrigger
         gsap.registerPlugin(ScrollTrigger);
-
-        // Hero
-        const tl = gsap.timeline();
-        tl.to(".hero-title", { opacity: 1, y: 0, duration: 1.5, ease: "power3.out", delay: 0.2 })
-          .to(".hero-sub", { opacity: 1, y: 0, duration: 1.5, ease: "power3.out" }, "-=1")
-          .to(".hero-scroll", { opacity: 1, duration: 1 }, "-=0.5");
 
         // Fade Ups
         gsap.utils.toArray('.fade-in-up').forEach(element => {
@@ -413,12 +580,10 @@
             y: 50, opacity: 0, duration: 1, stagger: 0.15, ease: "power3.out"
         });
 
-        // 4. Responsive Horizontal Scroll Logic (Desktop Only)
+        // Horizontal Scroll
         let mm = gsap.matchMedia();
-
         mm.add("(min-width: 769px)", () => {
             const sectionsContainer = document.querySelector(".horizontal-wrapper");
-            
             gsap.to(sectionsContainer, {
                 x: () => -(sectionsContainer.scrollWidth - window.innerWidth),
                 ease: "none",
@@ -432,14 +597,11 @@
             });
         });
 
-        // 5. Navbar Shadow
+        // Navbar Shadow
         const navbar = document.getElementById('navbar');
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                navbar.classList.add('shadow-sm');
-            } else {
-                navbar.classList.remove('shadow-sm');
-            }
+            if (window.scrollY > 50) navbar.classList.add('shadow-sm');
+            else navbar.classList.remove('shadow-sm');
         });
     </script>
 </body>
